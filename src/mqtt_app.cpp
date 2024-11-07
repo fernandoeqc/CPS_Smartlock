@@ -12,7 +12,17 @@ PubSubClient clientMqtt(espClient); // Cria uma instancia de um cliente MQTT
 void callback_mqtt(char *topic, byte *payload, unsigned int length)
 {
     Serial.println("weak func callback_mqtt()");
-    // Weak function
+    // Weak function. Não modifique.
+}
+
+
+void t_mqtt(void* z)
+{
+    while (true)
+    {
+        mqtt_loop();
+        delay(10);
+    }
 }
 
 void mqtt_init()
@@ -57,6 +67,8 @@ void mqtt_init()
 
     clientMqtt.publish("unifor/CPS/Smartlock", "Hello from ESP32");
     clientMqtt.subscribe("unifor/cps/led");
+
+    xTaskCreate(t_mqtt, "MQTT", 1024*2, (void*)NULL, 1, NULL);
 }
 
 void mqtt_loop()
