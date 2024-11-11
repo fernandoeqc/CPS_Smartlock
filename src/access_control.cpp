@@ -1,10 +1,24 @@
 #include <Arduino.h>
+#include "freertos/FreeRTOS.h"
 #include "access_control.h"
-#include "mfrc522.h"
+#include "mfrc522_app.h"
 
 #define LED_VERD 4
 #define LED_VERM 2
 #define BUZZER 33
+
+hw_timer_t * timer = NULL;
+portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
+
+void ARDUINO_ISR_ATTR onTimer()
+{
+    // Increment the counter and set the time of ISR
+    portENTER_CRITICAL_ISR(&timerMux);
+
+    // Bloquear a trava
+    portEXIT_CRITICAL_ISR(&timerMux);
+    // It is safe to use digitalRead/Write here if you want to toggle an output
+}
 
 void t_access_control(void *z)
 {
@@ -74,6 +88,12 @@ void access_control_init()
     pinMode(LED_VERM, OUTPUT);
     pinMode(LED_VERD, OUTPUT);
     pinMode(BUZZER, OUTPUT);
+
+    // Set timer frequency to 1Mhz
+    timer = timerBegin(1000000);
+
+    // Attach onTimer function to our timer.
+    timerAttachInterrupt(timer, &onTimer);    
 
     xTaskCreate(t_access_control, "ACCESS CONTROL", 1024*1, (void*)NULL, 1, NULL);
 }

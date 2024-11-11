@@ -4,7 +4,7 @@
 
 #include "wifi_app.h"
 #include "mqtt_app.h"
-#include "mfrc522.h"
+#include "mfrc522_app.h"
 
 int LED = 22;
 
@@ -44,6 +44,22 @@ void callback_mqtt(char *topic, byte *payload, unsigned int length)
     {
         cmd_register_new_card(pld);
     }
+
+    if (strcmp(topic, TOPIC_PREFIX "change_card"))
+    {
+
+    }
+    //Acionar trava
+    if (strcmp(topic, TOPIC_PREFIX "unlock_access"))
+    {
+        
+    }
+
+
+
+    //config-tempo-acionamento
+
+
 
     Serial.println();
     Serial.println(" -----------------------");
