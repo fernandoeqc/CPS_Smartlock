@@ -1,67 +1,69 @@
 //
 // Created by Filipe Soares on 11/11/24.
 //
-
 #include "LCD_Display.h"
 #include <LiquidCrystal_I2C.h>
 #include <Arduino.h>
 #include "buzzer.h"
 #include "magnet_lock.h"
 
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+LCD_Display::LCD_Display():
+    _lcd(0x27, 16, 2) {}
 
-void lcd_print_access(String access) {
-    lcd.clear();
-    lcd.home();
-    lcd.setCursor(5,0);
-    lcd.print("ACESSO");
-    lcd.setCursor(5,1);
-    lcd.print(access);
-}
-
-void lcd_turn_on(){
-    lcd.init();
-    lcd.backlight();
+void LCD_Display::turn_on() {
+    _lcd.init();
+    _lcd.backlight();
     buzzer_init();
     lock_init();
 }
 
-void lcd_show_acces_result(int result){
-    lcd.clear();
+void LCD_Display::_print_access(const String& access) {
+    _lcd.clear();
+    _lcd.home();
+    _lcd.setCursor(5,0);
+    _lcd.print("ACESSO");
+    _lcd.setCursor(5,1);
+    _lcd.print(access);
+}
+
+void LCD_Display::show_access_result(const int result) {
+    _lcd.clear();
     if(result==0){
         for (int i=0; i<2; i++) {
-            lcd_print_access("ACEITO!");
+            this->_print_access("ACEITO!");
             delay(800);
-            lcd.clear();
+            _lcd.clear();
             buzzer_double();
         }
         lock_open();
-        lcd_print_access("ACEITO!");
+        this->_print_access("ACEITO!");
         delay(2000);
         lock_close();
-        lcd.clear();
+        _lcd.clear();
 
     } else if(result==1){
         for (int i=0; i<2; i++) {
-            lcd_print_access("ADMIN!");
+            this->_print_access("ADMIN!");
             delay(800);
-            lcd.clear();
+            _lcd.clear();
             buzzer_short();
         }
-        lcd_print_access("ADMIN!");
+        lock_open();
+        this->_print_access("ADMIN!");
         delay(2000);
-        lcd.clear();
+        lock_close();
+        _lcd.clear();
     }
     else {
         for (int i=0; i<2; i++) {
-            lcd_print_access("NEGADO!");
+            this->_print_access("NEGADO!");
             delay(800);
-            lcd.clear();
+            _lcd.clear();
             buzzer_long();
         }
-        lcd_print_access("NEGADO!");
+        this->_print_access("NEGADO!");
         delay(2000);
-        lcd.clear();
+        _lcd.clear();
     }
 }
 
