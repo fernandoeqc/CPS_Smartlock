@@ -17,24 +17,3 @@ class LCD_Display {
 
         void _print_access(const String& access);
 };
-
-// Header file example
-// #pragma once
-//
-// #include <Arduino.h>
-//
-// class LEDControl {
-// public:
-//     // Constructor
-//     LEDControl(int pin);
-//
-//     // Methods
-//     void begin();
-//     void on();
-//     void off();
-//     void toggle();
-//
-// private:
-//     int _pin; // Pin where the LED is connected
-//     bool _state; // Current state of the LED (on/off)
-// };

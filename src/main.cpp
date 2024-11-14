@@ -2,6 +2,8 @@
 #include "LCD_Display.h"
 #include <MFRC522.h>
 
+
+
 LCD_Display display;
 void setup() {
     Serial.begin(115200);

@@ -7,13 +7,17 @@
 #include "buzzer.h"
 #include "magnet_lock.h"
 
+#define BUZZER_PIN 33
+
 LCD_Display::LCD_Display():
     _lcd(0x27, 16, 2) {}
+
+Buzzer buzzer(BUZZER_PIN);
 
 void LCD_Display::turn_on() {
     _lcd.init();
     _lcd.backlight();
-    buzzer_init();
+    buzzer.init();
     lock_init();
 }
 
@@ -33,7 +37,7 @@ void LCD_Display::show_access_result(const int result) {
             this->_print_access("ACEITO!");
             delay(800);
             _lcd.clear();
-            buzzer_double();
+            buzzer.twice();
         }
         lock_open();
         this->_print_access("ACEITO!");
@@ -46,7 +50,7 @@ void LCD_Display::show_access_result(const int result) {
             this->_print_access("ADMIN!");
             delay(800);
             _lcd.clear();
-            buzzer_short();
+            buzzer.quick();
         }
         lock_open();
         this->_print_access("ADMIN!");
@@ -59,7 +63,7 @@ void LCD_Display::show_access_result(const int result) {
             this->_print_access("NEGADO!");
             delay(800);
             _lcd.clear();
-            buzzer_long();
+            buzzer.lengthy();
         }
         this->_print_access("NEGADO!");
         delay(2000);
