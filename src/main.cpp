@@ -3,10 +3,10 @@
 #include "Doorman.h"
 
 #define BUZZER_PIN 33
-#define LOCK 32
+#define LOCK_PIN 32
 
 
-Doorman doorman(BUZZER_PIN, LOCK);
+Doorman doorman(BUZZER_PIN, LOCK_PIN);
 
 void setup() {
     Serial.begin(115200);

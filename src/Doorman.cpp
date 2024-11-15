@@ -40,8 +40,7 @@ void Doorman::access(int access, int time){
     }
     this->open();
     this->_display.print_access("ACEITO!");
-    delay(time);
-    this->close();
+
   } else if (access == 1){
     for (int i=0; i < 2; i++){
       this->_display.print_access("ADMIN!");
@@ -51,8 +50,7 @@ void Doorman::access(int access, int time){
     }
     this->open();
     this->_display.print_access("ADMIN!");
-    delay(time);
-    this->close();
+
   } else {
     for (int i=0; i < 2; i++){
       this->_display.print_access("NEGADO!");
@@ -62,7 +60,9 @@ void Doorman::access(int access, int time){
     }
     this->open();
     this->_display.print_access("NEGADO!");
-    delay(time);
-    this->close();
   }
+
+  delay(time);
+  this->close();
+  this->_display.clear();
 }
