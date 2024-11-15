@@ -5,20 +5,23 @@
 #include <LiquidCrystal_I2C.h>
 #include <Arduino.h>
 #include "buzzer.h"
-#include "magnet_lock.h"
+#include "Magnet_Lock.h"
 
 #define BUZZER_PIN 33
+#define LOCK 32
+
+Buzzer buzzer(BUZZER_PIN);
+Magnet_Lock lock(LOCK);
 
 LCD_Display::LCD_Display():
     _lcd(0x27, 16, 2) {}
 
-Buzzer buzzer(BUZZER_PIN);
 
 void LCD_Display::turn_on() {
     _lcd.init();
     _lcd.backlight();
     buzzer.init();
-    lock_init();
+    lock.init();
 }
 
 void LCD_Display::_print_access(const String& access) {
@@ -39,10 +42,10 @@ void LCD_Display::show_access_result(const int result) {
             _lcd.clear();
             buzzer.twice();
         }
-        lock_open();
+        lock.open();
         this->_print_access("ACEITO!");
         delay(2000);
-        lock_close();
+        lock.close();
         _lcd.clear();
 
     } else if(result==1){
@@ -52,10 +55,10 @@ void LCD_Display::show_access_result(const int result) {
             _lcd.clear();
             buzzer.quick();
         }
-        lock_open();
+        lock.open();
         this->_print_access("ADMIN!");
         delay(2000);
-        lock_close();
+        lock.close();
         _lcd.clear();
     }
     else {
