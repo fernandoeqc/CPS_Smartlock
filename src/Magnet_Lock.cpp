@@ -4,6 +4,7 @@
 #include "Magnet_Lock.h"
 #include <Arduino.h>
 
+
 Magnet_Lock::Magnet_Lock(uint8_t pin) {
     _pin = pin;
 }

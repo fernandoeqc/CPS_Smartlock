@@ -1,20 +1,21 @@
 #include <Arduino.h>
-#include "LCD_Display.h"
 #include <MFRC522.h>
+#include "Doorman.h"
+
+#define BUZZER_PIN 33
+#define LOCK 32
 
 
+Doorman doorman(BUZZER_PIN, LOCK);
 
-LCD_Display display;
 void setup() {
     Serial.begin(115200);
-    display.turn_on();
+    doorman.init();
 }
 
 void loop() {
-    display.show_access_result(0);
-    delay(500);
-    display.show_access_result(1);
-    delay(500);
-    display.show_access_result(2);
-    delay(500);
+    for (int i = 0; i < 3; i++) {
+        doorman.access(i);
+        delay(500);
+    }
 }

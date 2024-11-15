@@ -4,6 +4,7 @@
 #include "Buzzer.h"
 #include <Arduino.h>
 
+
 Buzzer::Buzzer(const uint8_t pin) {
   _pin = pin;
 }

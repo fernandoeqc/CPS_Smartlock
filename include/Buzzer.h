@@ -2,7 +2,9 @@
 // Created by Filipe Soares on 11/11/24.
 //
 #pragma once
+
 #include <Arduino.h>
+
 
 class Buzzer {
     public:
