@@ -38,7 +38,6 @@ void Doorman::access(int access, int time){
       this->_display.clear();
       this->_buzzer.twice();
     }
-    this->open();
     this->_display.print_access("ACEITO!");
 
   } else if (access == 1){
@@ -48,7 +47,6 @@ void Doorman::access(int access, int time){
       this->_display.clear();
       this->_buzzer.quick();
     }
-    this->open();
     this->_display.print_access("ADMIN!");
 
   } else {
@@ -58,10 +56,9 @@ void Doorman::access(int access, int time){
       this->_display.clear();
       this->_buzzer.lengthy();
     }
-    this->open();
     this->_display.print_access("NEGADO!");
   }
-
+  this->open();
   delay(time);
   this->close();
   this->_display.clear();

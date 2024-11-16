@@ -18,11 +18,3 @@ class Buzzer {
     private:
         uint8_t _pin;
 };
-
-void buzzer_init();
-
-void buzzer_short();
-
-void buzzer_long();
-
-void buzzer_double();
