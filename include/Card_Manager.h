@@ -23,12 +23,12 @@ class Card_Manager {
     int empty_slots();
     void append(Card card);
     void remove(Card card);
-    void upgrade(Card card);
-    void downgrade(Card card);
+    void upgrade(String id);
+    void downgrade(String id);
+    Card* get(String id);
 
   private:
     Card _card_list[NUM_OF_CARDS];
     MFRC522 _mfrc522;
     int _empty_slots;
-    int _MAX_NUM_OF_CARDS;
 };

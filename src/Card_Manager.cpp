@@ -16,7 +16,6 @@ Card_Manager::Card_Manager(uint8_t PIN_SS, uint8_t PIN_RST):
     _card_list[i] = Card();
   }
   _empty_slots = NUM_OF_CARDS;
-  _MAX_NUM_OF_CARDS = NUM_OF_CARDS;
 }
 
 void Card_Manager::init(){
@@ -25,10 +24,18 @@ void Card_Manager::init(){
 }
 
 void Card_Manager::listen(){
+  Serial.println("Card Listening");
   while(true){
-    if (_mfrc522.PICC_IsNewCardPresent() && _mfrc522.PICC_ReadCardSerial()) {
+    if (_mfrc522.PICC_IsNewCardPresent()) {
+      Serial.println("Card found");
+    }
+
+    if (_mfrc522.PICC_ReadCardSerial()) {
+      Serial.println("Card red");
       return;
     }
+
+    delay(10);
   }
 }
 
@@ -75,6 +82,7 @@ void Card_Manager::append(Card card){
     if (_card_list[i].get_id() == "None") {
       _card_list[i] = card;
       _empty_slots--;
+      Serial.println(String("Registered the card id: ") + String(_card_list[i].get_id()) );
       return;
     }
   }
@@ -94,4 +102,55 @@ void Card_Manager::remove(Card card){
   return;
 }
 
-//void Card
+void Card_Manager::upgrade(String id) {
+  for (int i = 0; i < NUM_OF_CARDS; i++) {
+    if (_card_list[i].get_id() == id) {
+      int card_level = _card_list[i].get_level();
+
+      switch (card_level) {
+        case 0:
+          _card_list[i].give_admin();
+          break;
+
+        case 1:
+          break;
+
+        default:
+          _card_list[i].give_access();
+          break;
+      }
+      return;
+    }
+  }
+}
+
+void Card_Manager::downgrade(String id) {
+  for (int i = 0; i < NUM_OF_CARDS; i++) {
+    if (_card_list[i].get_id() == id) {
+      int card_level = _card_list[i].get_level();
+
+      switch (card_level) {
+        case 0:
+          _card_list[i].remove_access();
+        break;
+
+        case 1:
+          _card_list[i].give_access();
+          break;
+
+        default:
+          break;
+      }
+      return;
+    }
+  }
+}
+
+Card* Card_Manager::get(String id) {
+  for (int i = 0; i < NUM_OF_CARDS; i++) {
+    if (_card_list[i].get_id() == id) {
+      return &(_card_list[i]);
+    }
+  }
+  return nullptr;
+}
