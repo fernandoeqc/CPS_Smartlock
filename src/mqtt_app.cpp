@@ -66,7 +66,9 @@ void mqtt_init()
     Serial.print("Tentando enviar a mensagem");
 
     clientMqtt.publish("unifor/CPS/Smartlock", "Hello from ESP32");
-    clientMqtt.subscribe("unifor/cps/led");
+    char subscribe_topic[50] = TOPIC_PREFIX "#";
+    clientMqtt.subscribe(subscribe_topic);
+    Serial.println("Tópico inscrito: " + (String)subscribe_topic);
 
     xTaskCreate(t_mqtt, "MQTT", 1024*2, (void*)NULL, 1, NULL);
 }

@@ -90,10 +90,10 @@ void access_control_init()
     pinMode(BUZZER, OUTPUT);
 
     // Set timer frequency to 1Mhz
-    timer = timerBegin(1000000);
+    timer = timerBegin(0, 80, true);
 
     // Attach onTimer function to our timer.
-    timerAttachInterrupt(timer, &onTimer);    
+    timerAttachInterrupt(timer, &onTimer, true);
 
     xTaskCreate(t_access_control, "ACCESS CONTROL", 1024*1, (void*)NULL, 1, NULL);
 }
