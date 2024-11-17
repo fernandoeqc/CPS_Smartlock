@@ -1,8 +1,12 @@
 #include <Arduino.h>
-#include <MFRC522.h>
 #include "Doorman.h"
-#include "access_control.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
+#include "wifi_app.h"
+#include "mqtt_app.h"
 #include "mfrc522_app.h"
+#include "access_control.h"
 
 #define BUZZER_PIN 33
 #define LOCK_PIN 32
@@ -10,13 +14,6 @@
 extern MFRC522controller mfrc522ctrl;
 Doorman doorman(BUZZER_PIN, LOCK_PIN);
 
-#include <Arduino.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-
-#include "wifi_app.h"
-#include "mqtt_app.h"
-#include "mfrc522_app.h"
 
 int LED = 22;
 
