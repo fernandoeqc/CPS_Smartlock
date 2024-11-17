@@ -1,11 +1,13 @@
 #include <Arduino.h>
 #include <MFRC522.h>
 #include "Doorman.h"
+#include "access_control.h"
+#include "mfrc522_app.h"
 
 #define BUZZER_PIN 33
 #define LOCK_PIN 32
 
-
+extern MFRC522controller mfrc522ctrl;
 Doorman doorman(BUZZER_PIN, LOCK_PIN);
 
 #include <Arduino.h>
@@ -52,7 +54,7 @@ void callback_mqtt(char *topic, byte *payload, unsigned int length)
 
     if (strcmp(topic, TOPIC_PREFIX "register_new_card"))
     {
-        cmd_register_new_card(pld);
+        mfrc522ctrl.cmd_register_new_card(pld);
     }
 
     if (strcmp(topic, TOPIC_PREFIX "change_card"))
@@ -83,6 +85,7 @@ void setup() {
     
     wifi_init();
     mqtt_init();
+    access_control_init();
 }
 
 void loop() {

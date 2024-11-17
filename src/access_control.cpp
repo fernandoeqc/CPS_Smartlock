@@ -1,17 +1,20 @@
 #include <Arduino.h>
 #include "freertos/FreeRTOS.h"
 #include "access_control.h"
-#include "mfrc522_app.h"
 
 #define LED_VERD 4
 #define LED_VERM 2
 #define BUZZER 33
+
+MFRC522controller mfrc522ctrl;
+
 
 hw_timer_t * timer = NULL;
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 
 void ARDUINO_ISR_ATTR onTimer()
 {
+
     // Increment the counter and set the time of ISR
     portENTER_CRITICAL_ISR(&timerMux);
 
@@ -24,18 +27,18 @@ void t_access_control(void *z)
 {
     while (true)
     {
-        if (!card_detected())
+        if (!mfrc522ctrl.card_detected())
         {
             continue;
         }
 
-        if (!card_registered())
+        if (!mfrc522ctrl.card_registered())
         {
             Serial.println(": Cartão não registrado");
             continue;
         }
 
-        String level = get_card_level();
+        String level = mfrc522ctrl.get_card_level();
 
         if (level == "admin")
         {
@@ -77,7 +80,7 @@ void t_access_control(void *z)
             }
         }
 
-        card_clear();
+        mfrc522ctrl.card_clear();
     }
     delay(1000);
     

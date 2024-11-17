@@ -1,3 +1,4 @@
+#include "mfrc522_app.h"
 #include <MFRC522.h>
 #include <SPI.h>
 
@@ -34,6 +35,7 @@ bool load_card_data(String *conteudo);
 /* Tasks */
 void t_rfid_new_card(void *z)
 {
+    String level = *(String*)z;
     if (uuid_list.count >= MAX_CARDS)
     {
         Serial.println("Número de cartões excedido!");
@@ -50,6 +52,7 @@ void t_rfid_new_card(void *z)
         if (load_card_data(&conteudo))
         {
             uuid_list.card[uuid_list.count].uuid = conteudo; /// COPIAR NOVO CARTÃO
+            uuid_list.card[uuid_list.count].level = level;
             Serial.println("Novo cartão encontrado");
             break;
         }
@@ -107,7 +110,7 @@ bool load_card_data(String *conteudo)
 
 
 /* Public functions */
-bool card_detected()
+bool MFRC522controller::card_detected()
 {
     if (!card_found)
     {
@@ -118,7 +121,7 @@ bool card_detected()
     return true;
 }
 
-bool card_registered()
+bool MFRC522controller::card_registered()
 {
     for (size_t i = 0; i < MAX_CARDS; i++)
     {
@@ -131,25 +134,25 @@ bool card_registered()
     return false;
 }
 
-String get_card_level()
+String MFRC522controller::get_card_level()
 {
     return uuid_list.card[current_card_index].level;
 }
 
-void card_clear()
+void MFRC522controller::card_clear()
 {
     card_data = "";
     card_found = false;
     current_card_index = -1;
 }
 
-void cmd_register_new_card(String level)
+void MFRC522controller::cmd_register_new_card(String level)
 {
     level_new_card = level;
     xTaskCreate(t_rfid_new_card, "RFID_new_card", 1024*2, (void*)&level_new_card, 1, NULL);
 }
 
-void rfid_init()
+void MFRC522controller::rfid_init()
 {
     SPI.begin();        // Configura a comunicação SPI
     mfrc522.PCD_Init(); // Configura o modulo MFRC522
