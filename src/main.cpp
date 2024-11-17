@@ -1,4 +1,14 @@
 #include <Arduino.h>
+#include <MFRC522.h>
+#include "Doorman.h"
+
+#define BUZZER_PIN 33
+#define LOCK_PIN 32
+
+
+Doorman doorman(BUZZER_PIN, LOCK_PIN);
+
+#include <Arduino.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
@@ -66,13 +76,17 @@ void callback_mqtt(char *topic, byte *payload, unsigned int length)
 }
 
 void setup() {
-    Serial.begin(115200);
     pinMode(LED, OUTPUT);
+
+    Serial.begin(115200);
+    doorman.init();
     
     wifi_init();
     mqtt_init();
 }
 
 void loop() {
+    doorman.access(1);
+
     delay(10);
 }
