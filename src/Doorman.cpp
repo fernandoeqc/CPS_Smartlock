@@ -39,6 +39,10 @@ void Doorman::access(int access, int time){
       this->_buzzer.twice();
     }
     this->_display.print_access("ACEITO!");
+    this->open();
+    delay(time);
+    this->close();
+    Serial.println("Doorman closed");
 
   } else if (access == 1){
     for (int i=0; i < 2; i++){
@@ -48,6 +52,10 @@ void Doorman::access(int access, int time){
       this->_buzzer.quick();
     }
     this->_display.print_access("ADMIN!");
+    this->open();
+    delay(time);
+    this->close();
+    Serial.println("Doorman closed");
 
   } else {
     for (int i=0; i < 2; i++){
@@ -58,8 +66,7 @@ void Doorman::access(int access, int time){
     }
     this->_display.print_access("NEGADO!");
   }
-  this->open();
-  delay(time);
-  this->close();
+
   this->_display.clear();
+  Serial.println("Doorman display clear");
 }

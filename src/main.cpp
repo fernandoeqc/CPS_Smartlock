@@ -42,4 +42,5 @@ void loop() {
     doorman.access(card_level);
 
     delay(200);
+    Serial.println("next loop");
 }

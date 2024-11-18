@@ -15,8 +15,10 @@ void Magnet_Lock::init() {
 
 void Magnet_Lock::open() {
     digitalWrite(_pin, HIGH);
+    Serial.println("Magnet_Lock::open");
 }
 
 void Magnet_Lock::close() {
     digitalWrite(_pin, LOW);
+    Serial.println("Magnet_Lock::close");
 }
