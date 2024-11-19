@@ -70,3 +70,31 @@ void Doorman::access(int access, int time){
   this->_display.clear();
   Serial.println("Doorman display clear");
 }
+
+void Doorman::admin_only_access(int access, int time){
+if (access == 1){
+    for (int i=0; i < 2; i++){
+      this->_display.print_access("ADMIN!");
+      delay(INNER_DELAY);
+      this->_display.clear();
+      this->_buzzer.quick();
+    }
+    this->_display.print_access("ADMIN!");
+    this->open();
+    delay(time);
+    this->close();
+    Serial.println("Doorman closed");
+
+  } else {
+    for (int i=0; i < 2; i++){
+      this->_display.print_access("NEGADO!");
+      delay(INNER_DELAY);
+      this->_display.clear();
+      this->_buzzer.lengthy();
+    }
+    this->_display.print_access("NEGADO!");
+  }
+
+  this->_display.clear();
+  Serial.println("Doorman display clear");
+}

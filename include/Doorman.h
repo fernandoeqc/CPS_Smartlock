@@ -15,6 +15,7 @@ class Doorman {
 
         void init();
         void access(int access, int time=2000);
+        void admin_only_access(int access, int time=2000);
         void close();
         void open();
 
