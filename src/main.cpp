@@ -9,7 +9,7 @@
 #define LOCK_PIN 32
 #define RST_PIN 15
 #define SS_PIN 5
-
+#define NEW_CARD_PIN 12
 
 String white_card_id = String("bd 83 8a 21");
 String key_chain_id = String("7a 6e 2d a4");
@@ -25,6 +25,20 @@ Doorman doorman(BUZZER_PIN, LOCK_PIN);
 
 Card_Manager cm(SS_PIN, RST_PIN);
 
+bool wait_new_card() {
+    static bool new_request = false;
+    bool pin_state = digitalRead(NEW_CARD_PIN); 
+    if ( pin_state && !new_request ) {
+        new_request = true;
+    } else if ( !pin_state && new_request ) {
+        new_request = false;
+    }
+    return new_request;
+}
+
+void register_new_card() {
+    
+}
 
 void loop_card(void *z) {
     while(true) {
@@ -32,6 +46,11 @@ void loop_card(void *z) {
         String card_id = cm.read();
 
         int card_level = 2;
+        if (wait_new_card())
+        {
+            menssager.new_card(card_id);
+            continue;
+        }
 
         if (cm.is_card_registred(card_id)) {
             Card* card = cm.get(card_id);
