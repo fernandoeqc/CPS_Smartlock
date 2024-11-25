@@ -5,9 +5,15 @@
 #include <PubSubClient.h>
 #include <WiFi.h>
 #include "MQTT_Menssager.h"
+#include <ArduinoJson.h>
+#include "Card_Manager.h"
+#include "Doorman.h"
 
 int MQTT_Menssager::_access_level;
 int MQTT_Menssager::_open_time;
+
+extern Card_Manager cm;
+extern Doorman doorman;
 
 MQTT_Menssager::MQTT_Menssager(WiFiClient* wifi_client, int access_level, int open_time):
  _mqtt_client(*wifi_client) {
@@ -42,7 +48,9 @@ int MQTT_Menssager::get_open_time() {
 void MQTT_Menssager::_callback(char* topic, byte* payload, unsigned int length){
     Serial.println("Nova messagem recebida!");
     Serial.println(topic);
-    Serial.println(TOPIC_PREFIX"door_access_level");
+
+    payload[length] = '\0'; // Ensure null terminated string
+
     if (strcmp(topic, TOPIC_PREFIX"door_access_level") == 0){
         Serial.println("In door_access_level");
         if (length != 1) {
@@ -59,6 +67,37 @@ void MQTT_Menssager::_callback(char* topic, byte* payload, unsigned int length){
             MQTT_Menssager::set_access_level(new_access_level_int);
         }
 
+    }
+    else if (strcmp(topic, TOPIC_PREFIX "change_card_level") == 0){
+        //ex: {"card": "03 03 03 03", "level": 1}
+        Serial.println("In change_card_level");
+        if (length != 1) {
+            Serial.println("Incorrect size");
+            return;
+        }
+
+        Serial.println("The payload is:");
+
+        JsonDocument doc;
+        DeserializationError error = deserializeJson(doc, payload);
+        if (error) {
+            Serial.print(F("deserializeJson() failed: "));
+            Serial.println(error.c_str());
+            return;
+        }
+        String card = doc["card"];
+        int level = doc["level"];
+        if (level == 1) {
+            cm.upgrade(card);
+        } else if (level == 0) {
+            cm.downgrade(card);
+        }
+    }
+    else if (strcmp(topic, TOPIC_PREFIX "change_card_level") == 0){
+        //change_time
+    }
+    else if (strcmp(topic, TOPIC_PREFIX "unlock_access") == 0){
+        doorman.access(1);
     }
 }
 

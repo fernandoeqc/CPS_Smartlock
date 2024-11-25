@@ -22,5 +22,5 @@ Projeto para a cadeira de Ciber Phisical Systems da Unifor 2024.2
 	payload: Inteiro
 	(milisegundos)
 
-- unifor/cps/789456/access_level
+- unifor/cps/789456/door_access_level
 	payload: Booleano
