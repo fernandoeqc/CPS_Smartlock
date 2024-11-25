@@ -71,10 +71,10 @@ void MQTT_Menssager::_callback(char* topic, byte* payload, unsigned int length){
     else if (strcmp(topic, TOPIC_PREFIX "change_card_level") == 0){
         //ex: {"card": "03 03 03 03", "level": 1}
         Serial.println("In change_card_level");
-        if (length != 1) {
-            Serial.println("Incorrect size");
-            return;
-        }
+        // if (length != 1) {
+        //     Serial.println("Incorrect size");
+        //     return;
+        // }
 
         Serial.println("The payload is:");
 
@@ -87,10 +87,16 @@ void MQTT_Menssager::_callback(char* topic, byte* payload, unsigned int length){
         }
         String card = doc["card"];
         int level = doc["level"];
+        Serial.println("Card ID: " + String(card) + ", Level: " + String(level));
         if (level == 1) {
-            cm.upgrade(card);
+            Card *c = cm.get(card);
+            c->give_admin();
         } else if (level == 0) {
-            cm.downgrade(card);
+            Card *c = cm.get(card);
+            c->give_access();
+        } else if (level == 2) {
+            Card *c = cm.get(card);
+            c->remove_access();
         }
     }
     else if (strcmp(topic, TOPIC_PREFIX "change_open_time") == 0){
