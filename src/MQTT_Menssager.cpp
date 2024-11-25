@@ -94,7 +94,11 @@ void MQTT_Menssager::_callback(char* topic, byte* payload, unsigned int length){
         }
     }
     else if (strcmp(topic, TOPIC_PREFIX "change_card_level") == 0){
-        //change_time
+        int open_time = atoi((const char*)payload);
+        if (open_time >= 2000 && open_time <= 20000) {
+            Serial.println("Tempo de abertura de porta atualizado: " + String(open_time));
+            _open_time = open_time;
+        }
     }
     else if (strcmp(topic, TOPIC_PREFIX "unlock_access") == 0){
         doorman.access(1);
