@@ -25,20 +25,19 @@ Doorman doorman(BUZZER_PIN, LOCK_PIN);
 
 Card_Manager cm(SS_PIN, RST_PIN);
 
+bool pin_state = true;
+
 bool wait_new_card() {
     static bool new_request = false;
-    bool pin_state = digitalRead(NEW_CARD_PIN); 
-    if ( pin_state && !new_request ) {
+    pin_state = digitalRead(NEW_CARD_PIN);
+    if ( !pin_state && !new_request ) {
         new_request = true;
-    } else if ( !pin_state && new_request ) {
+    } else if ( pin_state && new_request ) {
         new_request = false;
     }
     return new_request;
 }
 
-void register_new_card() {
-    
-}
 
 void loop_card(void *z) {
     while(true) {
@@ -82,7 +81,7 @@ void loop_mqtt(void *z) {
 }
 void setup() {
     Serial.begin(115200);
-
+    pinMode(NEW_CARD_PIN, INPUT_PULLUP);
     // CONFIGURA WIFI
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD); // Configura o WiFi
 
