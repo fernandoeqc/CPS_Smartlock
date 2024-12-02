@@ -13,8 +13,9 @@
 Doorman::Doorman(uint8_t buzzer_pin, uint8_t lock_pin):
      _buzzer(buzzer_pin),
      _lock(lock_pin),
-     _display()
-     {}
+     _display() {
+      this->is_door_open = false;
+}
 
 void Doorman::init(){
   _buzzer.init();
@@ -23,11 +24,24 @@ void Doorman::init(){
 }
 
 void Doorman::open(){
+  this->is_door_open = true;
   this->_lock.open();
 }
 
 void Doorman::close(){
+  this->is_door_open = false;
   this->_lock.close();
+}
+
+void Doorman::listen_lock(int time) {
+  int initial = 0;
+  while(initial < time) {
+    if (this->is_door_open == false) {
+      return;
+    }
+    delay(50);
+    initial += 50;
+  }
 }
 
 void Doorman::access(int access, int time){
@@ -40,7 +54,7 @@ void Doorman::access(int access, int time){
     }
     this->_display.print_access("ACEITO!");
     this->open();
-    delay(time);
+    this->listen_lock(time);
     this->close();
     Serial.println("Doorman closed");
 
@@ -53,7 +67,7 @@ void Doorman::access(int access, int time){
     }
     this->_display.print_access("ADMIN!");
     this->open();
-    delay(time);
+    this->listen_lock(time);
     this->close();
     Serial.println("Doorman closed");
 
@@ -81,7 +95,7 @@ if (access == 1){
     }
     this->_display.print_access("ADMIN!");
     this->open();
-    delay(time);
+    this->listen_lock(time);
     this->close();
     Serial.println("Doorman closed");
 

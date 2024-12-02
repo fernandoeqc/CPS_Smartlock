@@ -107,7 +107,7 @@ void MQTT_Menssager::_callback(char* topic, byte* payload, unsigned int length){
         }
     }
     else if (strcmp(topic, TOPIC_PREFIX "unlock_access") == 0){
-        doorman.access(0);
+        doorman.access(0, _open_time);
     }
 }
 
@@ -159,5 +159,5 @@ void MQTT_Menssager::door_closed(){
 }
 
 void MQTT_Menssager::new_card(String id){
-    this->_mqtt_client.publish(TOPIC_PREFIX"/new_card", id.c_str());
+    this->_mqtt_client.publish(TOPIC_PREFIX"card_data", id.c_str());
 }

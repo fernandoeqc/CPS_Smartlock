@@ -10,6 +10,7 @@
 #define RST_PIN 15
 #define SS_PIN 5
 #define NEW_CARD_PIN 12
+#define MAGNET_PIN 14
 
 String white_card_id = String("bd 83 8a 21");
 String key_chain_id = String("7a 6e 2d a4");
@@ -25,17 +26,18 @@ Doorman doorman(BUZZER_PIN, LOCK_PIN);
 
 Card_Manager cm(SS_PIN, RST_PIN);
 
-bool pin_state = true;
+bool new_request = true;
 
 bool wait_new_card() {
-    static bool new_request = false;
-    pin_state = digitalRead(NEW_CARD_PIN);
-    if ( !pin_state && !new_request ) {
-        new_request = true;
-    } else if ( pin_state && new_request ) {
+    int new_card_btn_pin_state = digitalRead(NEW_CARD_PIN);
+    if ( new_card_btn_pin_state == LOW && new_request == true ) {
         new_request = false;
+        return true;
+    } else if ( new_card_btn_pin_state == HIGH && new_request == false ) {
+        new_request = true;
+        return false;
     }
-    return new_request;
+    return false;
 }
 
 
@@ -47,7 +49,16 @@ void loop_card(void *z) {
         int card_level = 2;
         if (wait_new_card())
         {
-            menssager.new_card(card_id);
+            Card* old_card = cm.get(card_id);
+            if (old_card->get_level() == 1) {
+                String new_card_id = cm.listen_new(card_id);
+                if (cm.is_card_registred(new_card_id) == false) {
+                    menssager.new_card(new_card_id);
+                    Card new_card = Card(new_card_id, 0);
+                    cm.append(new_card);
+                }
+            }
+
             continue;
         }
 
@@ -69,7 +80,7 @@ void loop_card(void *z) {
 
         delay(200);
         Serial.println("next loop");
-
+        new_request = true;
     }
 }
 
@@ -82,6 +93,7 @@ void loop_mqtt(void *z) {
 void setup() {
     Serial.begin(115200);
     pinMode(NEW_CARD_PIN, INPUT_PULLUP);
+    pinMode(MAGNET_PIN, INPUT_PULLUP);
     // CONFIGURA WIFI
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD); // Configura o WiFi
 
@@ -100,13 +112,25 @@ void setup() {
     doorman.init();
     cm.init();
     cm.append(white_card);
-    cm.append(key_chain);
+    // cm.append(key_chain);
     xTaskCreate(loop_mqtt, "loop_mqtt", 2048, nullptr, 1, nullptr);
     xTaskCreate(loop_card, "loop_card", 2048, nullptr, 1, nullptr);
 
 }
 
-void loop() {
-    delay(1000);
+bool is_door_open = false;
 
+void loop() {
+    int magnet_state = digitalRead(MAGNET_PIN);
+
+    if (magnet_state == HIGH) {
+        is_door_open = true;
+        doorman.is_door_open = true;
+    }
+
+    if (is_door_open == true and magnet_state == LOW) {
+        is_door_open = false;
+        doorman.is_door_open = false;
+    }
+    delay(10);
 }

@@ -17,6 +17,7 @@ class Card_Manager {
 
     void init();
     void listen();
+    String listen_new(String admin_id);
     String read();
     bool is_card_registred(String id);
     bool is_list_full();

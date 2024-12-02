@@ -39,6 +39,25 @@ void Card_Manager::listen(){
   }
 }
 
+String Card_Manager::listen_new(String admin_id){
+  Serial.println("NEW Card Listening");
+  String new_card_id = admin_id;
+  while(new_card_id == admin_id){
+    if (_mfrc522.PICC_IsNewCardPresent()) {
+      Serial.println("Card found");
+    }
+
+    if (_mfrc522.PICC_ReadCardSerial()) {
+      Serial.println("Card red");
+      new_card_id = this->read();
+    }
+
+    delay(10);
+  }
+
+  return new_card_id;
+}
+
 String Card_Manager::read(){
   String id = "";
   for (byte i = 0; i < _mfrc522.uid.size; i++) {
