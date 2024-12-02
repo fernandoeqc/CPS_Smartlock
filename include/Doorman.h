@@ -15,12 +15,16 @@ class Doorman {
 
         void init();
         void access(int access, int time=2000);
+        void admin_only_access(int access, int time=2000);
         void close();
         void open();
+        bool is_door_open;
+        void listen_lock(int time);
 
     private:
         Buzzer _buzzer;
         Magnet_Lock _lock;
         LCD_Display _display;
+
 };
 
